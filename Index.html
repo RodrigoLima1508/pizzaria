@@ -1,98 +1,84 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pizzaria Napoli</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #fff8f0;
-      color: #333;
-      padding: 1rem;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    header h1 {
-      font-size: 2rem;
-      color: #d62828;
-    }
-    .form-section, .client-list {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-bottom: 2rem;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      background-color: #d62828;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #b71c1c;
-    }
-    .client-list h2 {
-      margin-bottom: 1rem;
-    }
-    .client-card {
-      background: #f9f9f9;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #fff8f0; color: #333; padding: 1rem; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; color: #d62828; }
+    .form-section, .client-list, .cardapio-section, .admin-section { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+    label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+    input { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; }
+    button { background-color: #d62828; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+    button:hover { background-color: #b71c1c; }
+    .client-card, .cardapio-item { background: #f9f9f9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .admin-section { display: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>Pizzaria Napoli</h1>
-    <p>Cadastro de Clientes</p>
-  </header>  <div class="form-section">
+    <p>Cadastro de Clientes, Pedidos e Administração</p>
+  </header>
+
+  <div class="form-section">
     <form id="form-cadastro">
       <label for="nome">Nome</label>
-      <input type="text" id="nome" required><label for="telefone">Telefone</label>
-  <input type="tel" id="telefone" required>
+      <input type="text" id="nome" required>
+      <label for="telefone">Telefone</label>
+      <input type="tel" id="telefone" required>
+      <label for="endereco">Endereço</label>
+      <input type="text" id="endereco" required>
+      <label for="bairro">Bairro</label>
+      <input type="text" id="bairro" required>
+      <label for="cidade">Cidade</label>
+      <input type="text" id="cidade" required>
+      <label for="complemento">Complemento</label>
+      <input type="text" id="complemento">
+      <button type="submit">Salvar Cliente</button>
+    </form>
+  </div>
 
-  <label for="endereco">Endereço</label>
-  <input type="text" id="endereco" required>
+  <div class="cardapio-section">
+    <h2>Cardápio</h2>
+    <div class="cardapio-item">
+      <strong>Pizza Margherita</strong><br>
+      R$ 35,00<br>
+      <button onclick="fazerPedido('Pizza Margherita')">Fazer Pedido</button>
+    </div>
+    <div class="cardapio-item">
+      <strong>Pizza Calabresa</strong><br>
+      R$ 38,00<br>
+      <button onclick="fazerPedido('Pizza Calabresa')">Fazer Pedido</button>
+    </div>
+    <div class="cardapio-item">
+      <strong>Pizza Quatro Queijos</strong><br>
+      R$ 40,00<br>
+      <button onclick="fazerPedido('Pizza Quatro Queijos')">Fazer Pedido</button>
+    </div>
+  </div>
 
-  <label for="bairro">Bairro</label>
-  <input type="text" id="bairro" required>
-
-  <label for="cidade">Cidade</label>
-  <input type="text" id="cidade" required>
-
-  <label for="complemento">Complemento</label>
-  <input type="text" id="complemento">
-
-  <button type="submit">Salvar Cliente</button>
-</form>
-
-  </div>  <div class="client-list">
+  <div class="client-list">
     <h2>Clientes Cadastrados</h2>
     <div id="lista-clientes"></div>
-  </div>  <script>
+  </div>
+
+  <!-- Admin Section -->
+  <div class="admin-section">
+    <h2>Área de Administração</h2>
+    <div id="lista-pedidos"></div>
+  </div>
+
+  <script>
     const form = document.getElementById('form-cadastro');
-    const lista = document.getElementById('lista-clientes');
+    const listaClientes = document.getElementById('lista-clientes');
+    const listaPedidos = document.getElementById('lista-pedidos');
+    const adminSection = document.querySelector('.admin-section');
 
     function salvarCliente(dados) {
       let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
@@ -103,8 +89,8 @@
 
     function mostrarClientes() {
       let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-      lista.innerHTML = '';
-      clientes.forEach((cliente, index) => {
+      listaClientes.innerHTML = '';
+      clientes.forEach(cliente => {
         const div = document.createElement('div');
         div.className = 'client-card';
         div.innerHTML = `
@@ -113,7 +99,28 @@
           Endereço: ${cliente.endereco}, ${cliente.bairro}, ${cliente.cidade}<br>
           Complemento: ${cliente.complemento || '-'}
         `;
-        lista.appendChild(div);
+        listaClientes.appendChild(div);
+      });
+    }
+
+    function salvarPedido(cliente, pedido) {
+      let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+      pedidos.push({ cliente, pedido });
+      localStorage.setItem('pedidos', JSON.stringify(pedidos));
+      mostrarPedidos();
+    }
+
+    function mostrarPedidos() {
+      let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+      listaPedidos.innerHTML = '';
+      pedidos.forEach(pedido => {
+        const div = document.createElement('div');
+        div.className = 'client-card';
+        div.innerHTML = `
+          <strong>${pedido.cliente.nome}</strong><br>
+          Pedido: ${pedido.pedido}
+        `;
+        listaPedidos.appendChild(div);
       });
     }
 
@@ -131,6 +138,24 @@
       form.reset();
     });
 
+    function fazerPedido(pizza) {
+      const cliente = JSON.parse(localStorage.getItem('clientes')).pop();  // Assume último cliente registrado
+      salvarPedido(cliente, pizza);
+      alert(`Pedido realizado: ${pizza}`);
+    }
+
+    function loginAdmin() {
+      const senha = prompt('Digite a senha de administrador:');
+      if (senha === '12345') {  // Defina sua senha
+        adminSection.style.display = 'block';
+        mostrarPedidos();
+      } else {
+        alert('Senha incorreta!');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', mostrarClientes);
-  </script></body>
+    loginAdmin();  // Chama a função de login ao carregar a página
+  </script>
+</body>
 </html>
