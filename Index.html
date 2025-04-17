@@ -1,1 +1,136 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizzaria Napoli</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fff8f0;
+      color: #333;
+      padding: 1rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: #d62828;
+    }
+    .form-section, .client-list {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #d62828;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #b71c1c;
+    }
+    .client-list h2 {
+      margin-bottom: 1rem;
+    }
+    .client-card {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pizzaria Napoli</h1>
+    <p>Cadastro de Clientes</p>
+  </header>  <div class="form-section">
+    <form id="form-cadastro">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" required><label for="telefone">Telefone</label>
+  <input type="tel" id="telefone" required>
 
+  <label for="endereco">Endereço</label>
+  <input type="text" id="endereco" required>
+
+  <label for="bairro">Bairro</label>
+  <input type="text" id="bairro" required>
+
+  <label for="cidade">Cidade</label>
+  <input type="text" id="cidade" required>
+
+  <label for="complemento">Complemento</label>
+  <input type="text" id="complemento">
+
+  <button type="submit">Salvar Cliente</button>
+</form>
+
+  </div>  <div class="client-list">
+    <h2>Clientes Cadastrados</h2>
+    <div id="lista-clientes"></div>
+  </div>  <script>
+    const form = document.getElementById('form-cadastro');
+    const lista = document.getElementById('lista-clientes');
+
+    function salvarCliente(dados) {
+      let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+      clientes.push(dados);
+      localStorage.setItem('clientes', JSON.stringify(clientes));
+      mostrarClientes();
+    }
+
+    function mostrarClientes() {
+      let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+      lista.innerHTML = '';
+      clientes.forEach((cliente, index) => {
+        const div = document.createElement('div');
+        div.className = 'client-card';
+        div.innerHTML = `
+          <strong>${cliente.nome}</strong><br>
+          Tel: ${cliente.telefone}<br>
+          Endereço: ${cliente.endereco}, ${cliente.bairro}, ${cliente.cidade}<br>
+          Complemento: ${cliente.complemento || '-'}
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const cliente = {
+        nome: form.nome.value,
+        telefone: form.telefone.value,
+        endereco: form.endereco.value,
+        bairro: form.bairro.value,
+        cidade: form.cidade.value,
+        complemento: form.complemento.value
+      };
+      salvarCliente(cliente);
+      form.reset();
+    });
+
+    document.addEventListener('DOMContentLoaded', mostrarClientes);
+  </script></body>
+</html>
